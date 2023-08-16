@@ -1,7 +1,9 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity =0.5.16;
 
-import './IAngstromFactory.sol';
-import './AngstromPair.sol';
+import "./IAngstromFactory.sol";
+import "./AngstromPair.sol";
 
 contract AngstromFactory is IAngstromFactory {
     address public owner;
@@ -20,12 +22,30 @@ contract AngstromFactory is IAngstromFactory {
     address[] public allPairs;
 
     event FeeToTransferred(address indexed prevFeeTo, address indexed newFeeTo);
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint length);
+    event PairCreated(
+        address indexed token0,
+        address indexed token1,
+        address pair,
+        uint length
+    );
     event OwnerFeeShareUpdated(uint prevOwnerFeeShare, uint ownerFeeShare);
-    event OwnershipTransferred(address indexed prevOwner, address indexed newOwner);
-    event FeePercentOwnershipTransferred(address indexed prevOwner, address indexed newOwner);
-    event SetStableOwnershipTransferred(address indexed prevOwner, address indexed newOwner);
-    event ReferrerFeeShareUpdated(address referrer, uint prevReferrerFeeShare, uint referrerFeeShare);
+    event OwnershipTransferred(
+        address indexed prevOwner,
+        address indexed newOwner
+    );
+    event FeePercentOwnershipTransferred(
+        address indexed prevOwner,
+        address indexed newOwner
+    );
+    event SetStableOwnershipTransferred(
+        address indexed prevOwner,
+        address indexed newOwner
+    );
+    event ReferrerFeeShareUpdated(
+        address referrer,
+        uint prevReferrerFeeShare,
+        uint referrerFeeShare
+    );
 
     constructor(address feeTo_) public {
         owner = msg.sender;
@@ -43,7 +63,10 @@ contract AngstromFactory is IAngstromFactory {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(owner == msg.sender, "AngstromFactory: caller is not the owner");
+        require(
+            owner == msg.sender,
+            "AngstromFactory: caller is not the owner"
+        );
         _;
     }
 
@@ -51,11 +74,19 @@ contract AngstromFactory is IAngstromFactory {
         return allPairs.length;
     }
 
-    function createPair(address tokenA, address tokenB) external returns (address pair) {
-        require(tokenA != tokenB, 'AngstromFactory: IDENTICAL_ADDRESSES');
-        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'AngstromFactory: ZERO_ADDRESS');
-        require(getPair[token0][token1] == address(0), 'AngstromFactory: PAIR_EXISTS'); // single check is sufficient
+    function createPair(
+        address tokenA,
+        address tokenB
+    ) external returns (address pair) {
+        require(tokenA != tokenB, "AngstromFactory: IDENTICAL_ADDRESSES");
+        (address token0, address token1) = tokenA < tokenB
+            ? (tokenA, tokenB)
+            : (tokenB, tokenA);
+        require(token0 != address(0), "AngstromFactory: ZERO_ADDRESS");
+        require(
+            getPair[token0][token1] == address(0),
+            "AngstromFactory: PAIR_EXISTS"
+        ); // single check is sufficient
         bytes memory bytecode = type(AngstromPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
@@ -76,13 +107,19 @@ contract AngstromFactory is IAngstromFactory {
     }
 
     function setFeePercentOwner(address _feePercentOwner) external onlyOwner {
-        require(_feePercentOwner != address(0), "AngstromFactory: zero address");
+        require(
+            _feePercentOwner != address(0),
+            "AngstromFactory: zero address"
+        );
         emit FeePercentOwnershipTransferred(feePercentOwner, _feePercentOwner);
         feePercentOwner = _feePercentOwner;
     }
 
     function setSetStableOwner(address _setStableOwner) external {
-        require(msg.sender == setStableOwner, "AngstromFactory: not setStableOwner");
+        require(
+            msg.sender == setStableOwner,
+            "AngstromFactory: not setStableOwner"
+        );
         require(_setStableOwner != address(0), "AngstromFactory: zero address");
         emit SetStableOwnershipTransferred(setStableOwner, _setStableOwner);
         setStableOwner = _setStableOwner;
@@ -99,8 +136,14 @@ contract AngstromFactory is IAngstromFactory {
      * Must only be called by owner
      */
     function setOwnerFeeShare(uint newOwnerFeeShare) external onlyOwner {
-        require(newOwnerFeeShare > 0, "AngstromFactory: ownerFeeShare mustn't exceed minimum");
-        require(newOwnerFeeShare <= OWNER_FEE_SHARE_MAX, "AngstromFactory: ownerFeeShare mustn't exceed maximum");
+        require(
+            newOwnerFeeShare > 0,
+            "AngstromFactory: ownerFeeShare mustn't exceed minimum"
+        );
+        require(
+            newOwnerFeeShare <= OWNER_FEE_SHARE_MAX,
+            "AngstromFactory: ownerFeeShare mustn't exceed maximum"
+        );
         emit OwnerFeeShareUpdated(ownerFeeShare, newOwnerFeeShare);
         ownerFeeShare = newOwnerFeeShare;
     }
@@ -110,14 +153,28 @@ contract AngstromFactory is IAngstromFactory {
      *
      * Must only be called by owner
      */
-    function setReferrerFeeShare(address referrer, uint referrerFeeShare) external onlyOwner {
+    function setReferrerFeeShare(
+        address referrer,
+        uint referrerFeeShare
+    ) external onlyOwner {
         require(referrer != address(0), "AngstromFactory: zero address");
-        require(referrerFeeShare <= REFERER_FEE_SHARE_MAX, "AngstromFactory: referrerFeeShare mustn't exceed maximum");
-        emit ReferrerFeeShareUpdated(referrer, referrersFeeShare[referrer], referrerFeeShare);
+        require(
+            referrerFeeShare <= REFERER_FEE_SHARE_MAX,
+            "AngstromFactory: referrerFeeShare mustn't exceed maximum"
+        );
+        emit ReferrerFeeShareUpdated(
+            referrer,
+            referrersFeeShare[referrer],
+            referrerFeeShare
+        );
         referrersFeeShare[referrer] = referrerFeeShare;
     }
 
-    function feeInfo() external view returns (uint _ownerFeeShare, address _feeTo) {
+    function feeInfo()
+        external
+        view
+        returns (uint _ownerFeeShare, address _feeTo)
+    {
         _ownerFeeShare = ownerFeeShare;
         _feeTo = feeTo;
     }
