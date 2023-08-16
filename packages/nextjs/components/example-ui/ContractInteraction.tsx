@@ -2,22 +2,24 @@ import { useState } from "react";
 import { CopyIcon } from "./assets/CopyIcon";
 import { DiamondIcon } from "./assets/DiamondIcon";
 import { HareIcon } from "./assets/HareIcon";
-import { ArrowSmallRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+
+// import { ArrowSmallRightIcon } from "@heroicons/react/24/solid";
+// import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export const ContractInteraction = () => {
   const [visible, setVisible] = useState(true);
-  const [newGreeting, setNewGreeting] = useState("");
+  // const [newGreeting, setNewGreeting] = useState("");
 
-  const { writeAsync, isLoading } = useScaffoldContractWrite({
-    contractName: "YourContract",
-    functionName: "setGreeting",
-    args: [newGreeting],
-    value: "0.01",
-    onBlockConfirmation: txnReceipt => {
-      console.log("📦 Transaction blockHash", txnReceipt.blockHash);
-    },
-  });
+  // const { writeAsync, isLoading } = useScaffoldContractWrite({
+  //   contractName: "NikaTokenV2",
+  //   functionName: "masterAddress",
+  //   args: [newGreeting],
+  //   value: "0.01",
+  //   onBlockConfirmation: txnReceipt => {
+  //     console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+  //   },
+  // });
 
   return (
     <div className="flex bg-base-300 relative pb-10">
@@ -58,11 +60,11 @@ export const ContractInteraction = () => {
               type="text"
               placeholder="Write your greeting here"
               className="input font-bai-jamjuree w-full px-5 bg-[url('/assets/gradient-bg.png')] bg-[length:100%_100%] border border-primary text-lg sm:text-2xl placeholder-white uppercase"
-              onChange={e => setNewGreeting(e.target.value)}
+              // onChange={e => setNewGreeting(e.target.value)}
             />
             <div className="flex rounded-full border border-primary p-1 flex-shrink-0">
               <div className="flex rounded-full border-2 border-primary p-1">
-                <button
+                {/* <button
                   className={`btn btn-primary rounded-full capitalize font-normal font-white w-24 flex items-center gap-1 hover:gap-2 transition-all tracking-widest ${
                     isLoading ? "loading" : ""
                   }`}
@@ -73,7 +75,7 @@ export const ContractInteraction = () => {
                       Send <ArrowSmallRightIcon className="w-3 h-3 mt-0.5" />
                     </>
                   )}
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

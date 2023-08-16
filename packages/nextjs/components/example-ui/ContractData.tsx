@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import Marquee from "react-fast-marquee";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import {
   useAnimationConfig,
   useScaffoldContract,
   useScaffoldContractRead,
   useScaffoldEventHistory,
-  useScaffoldEventSubscriber,
+  /* useScaffoldEventSubscriber, */
 } from "~~/hooks/scaffold-eth";
 
 const MARQUEE_PERIOD_IN_SEC = 5;
 
 export const ContractData = () => {
-  const { address } = useAccount();
+  // const { address } = useAccount();
   const [transitionEnabled, setTransitionEnabled] = useState(true);
   const [isRightDirection, setIsRightDirection] = useState(false);
   const [marqueeSpeed, setMarqueeSpeed] = useState(0);
@@ -21,42 +21,42 @@ export const ContractData = () => {
   const greetingRef = useRef<HTMLDivElement>(null);
 
   const { data: totalCounter } = useScaffoldContractRead({
-    contractName: "YourContract",
-    functionName: "totalCounter",
+    contractName: "NikaTokenV2",
+    functionName: "masterAddress",
   });
 
   const { data: currentGreeting, isLoading: isGreetingLoading } = useScaffoldContractRead({
-    contractName: "YourContract",
-    functionName: "greeting",
+    contractName: "NikaTokenV2",
+    functionName: "masterAddress",
   });
 
-  useScaffoldEventSubscriber({
-    contractName: "YourContract",
-    eventName: "GreetingChange",
-    listener: logs => {
-      logs.map(log => {
-        const { greetingSetter, value, premium, newGreeting } = log.args;
-        console.log("📡 GreetingChange event", greetingSetter, value, premium, newGreeting);
-      });
-    },
-  });
+  // useScaffoldEventSubscriber({
+  //   contractName: "NikaTokenV2",
+  //   // eventName: "GreetingChange",
+  //   // listener: logs => {
+  //   //   logs.map(log => {
+  //   //     // const { greetingSetter, value, premium, newGreeting } = log.args;
+  //   //     console.log("📡 GreetingChange event", masterAddress);
+  //   //   });
+  //   // },
+  // });
 
   const {
     data: myGreetingChangeEvents,
     isLoading: isLoadingEvents,
     error: errorReadingEvents,
   } = useScaffoldEventHistory({
-    contractName: "YourContract",
-    eventName: "GreetingChange",
+    contractName: "NikaTokenV2",
+    eventName: "InitializeMasterAddress",
     fromBlock: process.env.NEXT_PUBLIC_DEPLOY_BLOCK ? BigInt(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) : 0n,
-    filters: { greetingSetter: address },
+    // filters: { greetingSetter: address },
     blockData: true,
   });
 
   console.log("Events:", isLoadingEvents, errorReadingEvents, myGreetingChangeEvents);
 
-  const { data: yourContract } = useScaffoldContract({ contractName: "YourContract" });
-  console.log("yourContract: ", yourContract);
+  const { data: nikaTokenV2 } = useScaffoldContract({ contractName: "NikaTokenV2" });
+  console.log("nikaTokenV2: ", nikaTokenV2);
 
   const { showAnimation } = useAnimationConfig(totalCounter);
 
